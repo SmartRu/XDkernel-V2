@@ -26,6 +26,12 @@
 
 #include "dsi_panel.h"
 #include "dsi_ctrl_hw.h"
+#include <linux/pm_wakeup.h>
+
+#ifdef CONFIG_KLAPSE
+#include "../sde/klapse.h"
+#endif
+
 
 #if IS_ENABLED(CONFIG_LGE_DISPLAY_COMMON)
 #include "../lge/lge_dsi_panel.h"
@@ -723,6 +729,10 @@ int dsi_panel_set_backlight(struct dsi_panel *panel, u32 bl_lvl)
 		pr_err("Backlight type(%d) not supported\n", bl->type);
 		rc = -ENOTSUPP;
 	}
+	
+#ifdef CONFIG_KLAPSE
+	set_rgb_slider(bl_lvl);
+#endif
 
 	return rc;
 }

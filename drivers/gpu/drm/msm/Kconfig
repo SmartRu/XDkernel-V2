@@ -153,6 +153,12 @@ config LGE_DISPLAY_SW49408
 	bool "LGE sw49408"
 	---help---
 	The SW49408 provides support for SW49408 features made by LGE.
+config KLAPSE
+    bool CONFIG_KLAPSE
+    depends on DRM_MSM
+    default n
+    help
+        A simple rgb dynamic lapsing module similar to LineageOS' livedisplay
 
 config LGE_DISPLAY_COMMON
 	default y
