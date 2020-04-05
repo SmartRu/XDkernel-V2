@@ -120,4 +120,5 @@ all.config
 kernel/configs/android-*.cfg
 
 /output
+/out
 
