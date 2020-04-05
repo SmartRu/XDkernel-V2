@@ -3,7 +3,6 @@
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
 #include <asm/setup.h>
-#include <asm/setup.h>
 #include <soc/qcom/lge/board_lge.h>
 #include <linux/slab.h>
 	
@@ -28,8 +27,6 @@ static void proc_cmdline_set(char *name, char *value)
 	}	
 }
 
-static char new_command_line[COMMAND_LINE_SIZE];
-
 static int cmdline_proc_show(struct seq_file *m, void *v)
 {
 #ifdef CONFIG_MACH_LGE
@@ -38,7 +35,6 @@ static int cmdline_proc_show(struct seq_file *m, void *v)
 	}	
 #endif
 	seq_printf(m, "%s\n", updated_command_line);
-	seq_printf(m, "%s\n", new_command_line);
 	return 0;
 }
 
@@ -54,28 +50,11 @@ static const struct file_operations cmdline_proc_fops = {
 	.release	= single_release,
 };
 
-static void remove_flag(char *cmd, const char *flag)
-{
-	char *start_addr, *end_addr;
-
-	/* Ensure all instances of a flag are removed */
-	while ((start_addr = strstr(cmd, flag))) {
-		end_addr = strchr(start_addr, ' ');
-		if (end_addr)
-			memmove(start_addr, end_addr + 1, strlen(end_addr));
-		else
-			*(max(cmd, start_addr - 1)) = '\0';
-	}
-}
-
-static void remove_safetynet_flags(char *cmd)
-{
-	remove_flag(cmd, "androidboot.verifiedbootstate=");
-	remove_flag(cmd, "androidboot.veritymode=");
-}
-
 static int __init proc_cmdline_init(void)
 {
+	// copy it only once	
+	strcpy(updated_command_line, saved_command_line);
+
 	proc_create("cmdline", 0, NULL, &cmdline_proc_fops);
 	return 0;
 }
