@@ -26,6 +26,7 @@
 #include <linux/timer.h>
 #include <linux/kernel.h>
 #include <linux/platform_device.h>
+#include <linux/mutex.h>
 #include <linux/semaphore.h>
 #include <media/cam_sensor.h>
 #include <media/v4l2-event.h>
@@ -206,7 +207,8 @@ enum cam_cci_state_t {
  * @lock_status: to protect changes to irq_status1
  * @is_burst_read: Flag to determine if we are performing
  *                 a burst read operation or not
- * @irqs_disabled: Mask for IRQs that are disabled
+ * @init_mutex: Mutex for maintaining refcount for attached
+ *              devices to cci during init/deinit.
  */
 struct cci_device {
 	struct v4l2_subdev subdev;
@@ -234,6 +236,7 @@ struct cci_device {
 	uint32_t irq_status1;
 	spinlock_t lock_status;
 	bool is_burst_read;
+	struct mutex init_mutex;
 	struct mutex global_mutex;
 	uint32_t irqs_disabled;
 };
